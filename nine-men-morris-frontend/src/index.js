@@ -1,8 +1,31 @@
 let snd = new Audio("asset/nmm_moves.mp3");
+const body = document.querySelector('body')
 
 document.addEventListener("DOMContentLoaded", function(event) {
     createTable(13, 13);
+
+    buildPlayer()
+
+    // createPlayer()
 });
+
+function createPlayer(){
+    fetch('http://localhost:3000/games', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+    console.log('Success:', data);
+    })
+    .catch((error) => {
+    console.error('Error:', error);
+    });
+    }
+
 
 //row, column
 const buttonPositions = {
@@ -49,6 +72,37 @@ function createTable(rn, cn){
 }
 
 function handleEvent(id){
-    snd.play();
+    // snd.play();
     alert(id);
 }
+  function buildPlayer(){
+    let form = document.createElement('form')
+    let submit1 = document.createElement('input')
+    let submit2 = document.createElement('input')
+
+
+    let label1 = document.createElement('label')
+    let label2 = document.createElement('label')
+    let input1 = document.createElement('input')
+    let input2 = document.createElement('input')
+
+    input1.type = "text"
+    input2.type = "text"
+    label1.for = "name"
+    label1.textContent = "player1"
+    label2.for = "name"
+    label2.textContent = "player2"
+    submit1.type = 'submit'
+    submit2.type = 'submit'
+
+     form.append(label1, input1,submit1, label2, input2, submit2)
+     body.append(form)
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault
+        console.log(e)
+
+    })
+}
+
+
