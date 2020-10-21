@@ -13,4 +13,11 @@ class GamesController < ApplicationController
         game = Game.create(player_one_id: player1.id,player_two_id: player2.id, move_time_limit: "1", turn:1)
         render json: game, include: [:player_one, :player_two]
     end
+
+    def edit
+    end
+    
+    def update
+    end
+    
 end

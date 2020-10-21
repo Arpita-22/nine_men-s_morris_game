@@ -31,9 +31,12 @@ function createTable(rn, cn){
         let x = document.getElementById('nmm').insertRow(r);
         for(let c = 0; c < parseInt(cn, 10); c++) {
             let y =  x.insertCell(c);
-            let id = r.toString().concat("-" +c.toString());
-            if(buttonPositions[id] === true){
-                y.innerHTML=`<button onclick= "handleEvent(id)" id=${id} class='button'/>`
+            let buttonId = r.toString().concat("-" +c.toString());
+            if(buttonPositions[buttonId] === true){
+                // let button = document.createElement('button')
+                // y.innerHTML = button
+                // button.addEventListener('click',(e) => handleEvent(e,`${id}`))
+                y.innerHTML=`<button onclick= "handleEvent(id)" id=${buttonId} class='button'/>`
             } else {
                 //y.innerHTML="R" + r + "C" + c;
                 y.innerHTML="<div class='default-position'/>";
@@ -46,6 +49,7 @@ let snd = new Audio("asset/nmm_moves.mp3");
 const body = document.querySelector('body')
 
 let turn = 0;
+let gameId = '';
 
 document.addEventListener("DOMContentLoaded", function(event) {
     createTable(13, 13);
@@ -53,7 +57,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 function createPlayer(playerOne, playerTwo){
-    // console.log(playerOne, playerTwo)
     fetch('http://localhost:3000/games', {
         method: 'POST',
         headers: {
@@ -66,21 +69,37 @@ function createPlayer(playerOne, playerTwo){
     })
     .then(response => response.json())
     .then(data => {
-    console.log('Success:', data)
-    ;
+    console.log('Success:', data);
+        gameId = data.id;
     })
     .catch((error) => {
         console.error('Error:', error);
     });
 }
 
-function updateClick(){
-    fetch()
+function updateClick(buttonId){
+    console.log( buttonId, gameId)
+    fetch(`http://localhost:3000/games/${gameId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({turn: !turn}),
+    })
+    .then(response => response.json())
+    .then(data => {
+    console.log('Success:', data);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
 }
 
 
-function handleEvent(id){
+
+function handleEvent(buttonId){
     // snd.play();
+    updateClick(buttonId)
     if(turn === 1) {
         turn = 2;
     } else {
@@ -117,7 +136,6 @@ function buildPlayer(){
 playerForm.addEventListener('submit', (e) => {
     e.preventDefault()
     turn = 1;
-    // console.log(e.target[1].value)
     createPlayer(e.target[0].value, e.target[1].value)
 })
 
