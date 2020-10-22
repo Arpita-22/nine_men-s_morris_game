@@ -18,6 +18,15 @@ class GamesController < ApplicationController
     end
     
     def update
+        game = Game.find(params[:id])
+        game.update(game_params)
+        render json: game, include: [:player_one, :player_two]
     end
-    
+
+    private
+
+    def game_params
+        params.require(:game).permit(:turn)
+    end
+
 end

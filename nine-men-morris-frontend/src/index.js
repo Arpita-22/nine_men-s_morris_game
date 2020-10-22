@@ -95,17 +95,47 @@ function updateClick(buttonId){
     });
 }
 
+function deletePlayer(){
+    fetch(`http://localhost:3000/players/`,{
+        method: 'DELETE'
+    })
+    .then(res => res.json())
+    .then(() => {console.log()
+    })
+}
+
 
 
 function handleEvent(buttonId){
     // snd.play();
+    countPlayerOne = 0
+    countPlayerTwo = 0
+    let btn =  document.getElementById(`${buttonId}`)
     updateClick(buttonId)
     if(turn === 1) {
         turn = 2;
     } else {
         turn = 1;
     }
-    alert(turn);
+    if (turn === 1){
+        btn.style.backgroundColor = "yellow"
+    }
+    else{
+        btn.style.backgroundColor = "green"
+    }
+    // while (turn){
+    //     if (turn === 1){
+    //         countPlayerOne = countPlayerOne + 1
+    //         console.log(countPlayerOne) 
+    //     }
+    //     else{
+    //         countPlayerTwo = countPlayerTwo + 1
+    //         console.log(countPlayerTwo) 
+    //     }
+    // }
+    // alert(turn);
+    console.log(btn)
+    // console.log(countPlayerOne, countPlayerTwo)
 }
 
 let playerForm = document.createElement('form')
