@@ -39,17 +39,20 @@ function createTable(rn, cn){
                 y.innerHTML=`<button onclick= "handleEvent(id)" id=${buttonId} class='button'/>`
             } else {
                 //y.innerHTML="R" + r + "C" + c;
-                y.innerHTML="<div class='default-position'/>";
+                y.innerHTML=`<div class='default-position' id=${buttonId}/>`;
             }
         }
     }
 }
 
+
 let snd = new Audio("asset/nmm_moves.mp3");
 const body = document.querySelector('body')
 
-let turn = 0;
+let turn = 1;
 let gameId = '';
+let playerOnePiecesCount = 1;
+let playerTwoPiecesCount = 1;
 
 document.addEventListener("DOMContentLoaded", function(event) {
     createTable(13, 13);
@@ -78,7 +81,6 @@ function createPlayer(playerOne, playerTwo){
 }
 
 function updateClick(buttonId){
-    console.log( buttonId, gameId)
     fetch(`http://localhost:3000/games/${gameId}`, {
         method: 'PATCH',
         headers: {
@@ -104,38 +106,78 @@ function deletePlayer(){
     })
 }
 
-
+let mill = [
+    []
+]
 
 function handleEvent(buttonId){
     // snd.play();
-    countPlayerOne = 0
-    countPlayerTwo = 0
     let btn =  document.getElementById(`${buttonId}`)
     updateClick(buttonId)
+    if (turn === 1){
+        if(playerOnePiecesCount > 9){
+            if(!btn.style.backgroundColor) {
+                alert("You cannot add any more!");     
+           } else if (btn.style.backgroundColor == 'green'){
+                alert("You cannot choose the other players piece!");     
+           } else {
+                playerOnePiecesCount--;
+                btn.style.backgroundColor = ""
+                alert("You have chosen the piece to remove");     
+           }
+           return;
+        }
+        btn.style.backgroundColor = "yellow"
+        playerOnePiecesCount++
+    }
+    else{
+        if(playerTwoPiecesCount > 9){
+            if(!btn.style.backgroundColor) {
+                alert("You cannot add any more!");     
+            } else if (btn.style.backgroundColor === 'yellow'){
+                alert("You cannot choose the other players piece!");     
+            } else {
+                playerTwoPiecesCount--;
+                btn.style.backgroundColor = ""
+                alert("You have chosen the piece to remove");     
+            }
+            return;
+         }
+        btn.style.backgroundColor = "green"
+        playerTwoPiecesCount++;
+    }
+    
     if(turn === 1) {
         turn = 2;
     } else {
         turn = 1;
     }
-    if (turn === 1){
-        btn.style.backgroundColor = "yellow"
+   
+}
+
+
+function adjacentValidPositions(position){ 
+    let pos = position.split("-");
+    let x = parseInt(pos[0]);
+    let y = parseInt(pos[1]);
+
+    let validPositions = []
+    
+
+    for (let i = 0; i < 12; i++){
+        let element = document.getElementById(position)
+        if (element.nodeName === "BUTTON"){
+            function handleEvent(position)
+        }
+
     }
-    else{
-        btn.style.backgroundColor = "green"
-    }
-    // while (turn){
-    //     if (turn === 1){
-    //         countPlayerOne = countPlayerOne + 1
-    //         console.log(countPlayerOne) 
-    //     }
-    //     else{
-    //         countPlayerTwo = countPlayerTwo + 1
-    //         console.log(countPlayerTwo) 
-    //     }
-    // }
-    // alert(turn);
-    console.log(btn)
-    // console.log(countPlayerOne, countPlayerTwo)
+
+    //x traverse
+    
+    //y traverse
+
+    //diagonal
+    
 }
 
 let playerForm = document.createElement('form')
@@ -168,4 +210,3 @@ playerForm.addEventListener('submit', (e) => {
     turn = 1;
     createPlayer(e.target[0].value, e.target[1].value)
 })
-
