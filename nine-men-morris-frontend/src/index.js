@@ -33,9 +33,6 @@ function createTable(rn, cn){
             let y =  x.insertCell(c);
             let buttonId = r.toString().concat("-" +c.toString());
             if(buttonPositions[buttonId] === true){
-                // let button = document.createElement('button')
-                // y.innerHTML = button
-                // button.addEventListener('click',(e) => handleEvent(e,`${id}`))
                 y.innerHTML=`<button onclick= "handleEvent(id)" id=${buttonId} class='button'/>`
             } else {
                 //y.innerHTML="R" + r + "C" + c;
@@ -46,7 +43,7 @@ function createTable(rn, cn){
 }
 
 
-let snd = new Audio("asset/nmm_moves.mp3");
+// let snd = new Audio("asset/nmm_moves.mp3");
 const body = document.querySelector('body')
 
 let turn = 1;
@@ -55,8 +52,8 @@ let playerOnePiecesCount = 1;
 let playerTwoPiecesCount = 1;
 
 document.addEventListener("DOMContentLoaded", function(event) {
-    createTable(13, 13);
-    buildPlayer();
+    // createTable(13, 13);
+    buildForm();
 });
 
 function createPlayer(playerOne, playerTwo){
@@ -71,9 +68,11 @@ function createPlayer(playerOne, playerTwo){
         }),
     })
     .then(response => response.json())
-    .then(data => {
-    console.log('Success:', data);
-        gameId = data.id;
+    .then(game => {
+        playerForm.innerHTML = ' '
+        updatePlayer(game)
+        createTable(13, 13);
+        gameId = game.id;
     })
     .catch((error) => {
         console.error('Error:', error);
@@ -86,7 +85,7 @@ function updateClick(buttonId){
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({turn: !turn}),
+        body: JSON.stringify({turn: turn}),
     })
     .then(response => response.json())
     .then(data => {
@@ -97,18 +96,40 @@ function updateClick(buttonId){
     });
 }
 
-function deletePlayer(){
-    fetch(`http://localhost:3000/players/`,{
-        method: 'DELETE'
+function updatePlayer(game){
+    console.log(game.player_one.name)
+    fetch(`http://localhost:3000/games/${game.id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            playerOneId: game.player_one.id,
+            playerTwoId: game.player_two.id
+        }),
     })
-    .then(res => res.json())
-    .then(() => {console.log()
+    .then(response => response.json())
+    .then(game => {
+        buildPlayer(game)
+    console.log('Success:', game);
     })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
 }
 
-let mill = [
-    []
-]
+// function deletePlayer(){
+//     fetch(`http://localhost:3000/players/`,{
+//         method: 'DELETE'
+//     })
+//     .then(res => res.json())
+//     .then(() => {console.log()
+//     })
+// }
+
+// let mill = [
+//     []
+// ]
 
 function handleEvent(buttonId){
     // snd.play();
@@ -156,35 +177,38 @@ function handleEvent(buttonId){
 }
 
 
-function adjacentValidPositions(position){ 
-    let pos = position.split("-");
-    let x = parseInt(pos[0]);
-    let y = parseInt(pos[1]);
+// function adjacentValidPositions(position){ 
+//     let pos = position.split("-");
+//     let x = parseInt(pos[0]);
+//     let y = parseInt(pos[1]);
 
-    let validPositions = []
+//     let validPositions = []
     
 
-    for (let i = 0; i < 12; i++){
-        let element = document.getElementById(position)
-        if (element.nodeName === "BUTTON"){
-            function handleEvent(position)
-        }
+//     for (let i = 0; i < 12; i++){
+//         let element = document.getElementById(position)
+//         if (element.nodeName === "BUTTON"){
+//             function handleEvent(position)
+//         }
 
-    }
+//     }
 
-    //x traverse
+//     //x traverse
     
-    //y traverse
+//     //y traverse
 
-    //diagonal
+//     //diagonal
     
-}
+// }
 
 let playerForm = document.createElement('form')
 let submitPlayerInfo = document.createElement('input')
 body.append(playerForm)
 
-function buildPlayer(){
+function buildForm(){
+    // let playerForm = document.createElement('form')
+    // let submitPlayerInfo = document.createElement('input')
+    // body.append(playerForm)
     let labelPlayerOne = document.createElement('label')
     let labelPlayerTwo = document.createElement('label')
     
@@ -203,10 +227,30 @@ function buildPlayer(){
     submitPlayerInfo.type = 'submit'
     
     playerForm.append(labelPlayerOne, inputPlayerOne, labelPlayerTwo, inputPlayerTwo, submitPlayerInfo)
+
+    playerForm.addEventListener('submit', (e) => {
+        e.preventDefault()
+        turn = 1;
+        createPlayer(e.target[0].value, e.target[1].value)
+    })
 }
 
-playerForm.addEventListener('submit', (e) => {
-    e.preventDefault()
-    turn = 1;
-    createPlayer(e.target[0].value, e.target[1].value)
-})
+
+
+// playerForm.addEventListener('submit', (e) => {
+//     e.preventDefault()
+//     turn = 1;
+//     createPlayer(e.target[0].value, e.target[1].value)
+// })
+
+function buildPlayer(game){
+    let ul = document.createElement('ul')
+    let player1 = document.createElement('li')
+    let player2 = document.createElement('li')
+
+    player1.textContent = game.player_one.name
+    player2.textContent = game.player_two.name
+
+    ul.append(player1, player2)
+    body.append(ul)
+}
