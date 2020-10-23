@@ -3,7 +3,7 @@
     height: 45vw;
     position:absolute;
     border:1px solid #000;
-    top: 50%;
+    top: 53%;
     left: 50%;
     transform: translate(-50%, -50%);
 }

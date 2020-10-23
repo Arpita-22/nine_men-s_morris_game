@@ -14,9 +14,9 @@ class PlayersController < ApplicationController
         render json: player, include:[:games]
     end
 
-    def delete
+    def update
         player = Player.find(params[:id])
-        player.destroy
-        render json: {"Player no longer exists"}
+        render json: player, include:[:games]
     end
+
 end

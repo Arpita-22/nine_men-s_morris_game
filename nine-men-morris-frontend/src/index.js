@@ -127,16 +127,35 @@ function updatePlayer(game){
     });
 }
 
-function deleteGame(game, gameButton){
+function deleteGame(game){
     fetch(`http://localhost:3000/games/${game.id}`,{
         method: 'DELETE'
     })
     .then(res => res.json())
     .then(() => {
         document.getElementById("game-id").remove()
+        body.innerHTML = ' '
         buildForm()
     })
 }
+
+let mill = [
+    ["0-0","0-6","0-12"],
+    ["0-0", "6-0","12-0"],
+    ["12-0","12-6","12-12"],
+    ["0-12","6-12","12-12"],
+    ["2-2","2-6","2-10"],
+    ["2-2","6-2","10-2"],
+    ["2-10","6-10","10-10"],
+    ["10-2","10-6","10-10"],
+    ["4-4","4-6","4-8"],
+    ["4-4","6-4","8-4"],
+    ["4-8","6-8","8-8"],
+    ["8-4","8-6","8-8"]
+]
+
+let positionPlayerOne = []
+let  positionPlayerTwo = []
 
 
 function handleEvent(buttonId){
@@ -146,26 +165,31 @@ function handleEvent(buttonId){
     if (turn === 1){
         if(playerOnePiecesCount > 9){
             if(!btn.style.backgroundColor) {
+                calculateMillPlayer1()
                 alert("You cannot add any more!");     
-           } else if (btn.style.backgroundColor == 'green'){
+            } else if (btn.style.backgroundColor == 'green'){
                 alert("You cannot choose the other players piece!");     
-           } else {
+            } else {
+                calculateMillPlayer1()
                 playerOnePiecesCount--;
                 btn.style.backgroundColor = ""
                 alert("You have chosen the piece to remove");     
-           }
-           return;
+            }
+            return;
         }
         btn.style.backgroundColor = "yellow"
+        positionPlayerOne.push(buttonId)
         playerOnePiecesCount++
     }
     else{
         if(playerTwoPiecesCount > 9){
             if(!btn.style.backgroundColor) {
+                calculateMillPlayer2()
                 alert("You cannot add any more!");     
             } else if (btn.style.backgroundColor === 'yellow'){
                 alert("You cannot choose the other players piece!");     
             } else {
+                calculateMillPlayer2()
                 playerTwoPiecesCount--;
                 btn.style.backgroundColor = ""
                 alert("You have chosen the piece to remove");     
@@ -173,6 +197,7 @@ function handleEvent(buttonId){
             return;
          }
         btn.style.backgroundColor = "green"
+        positionPlayerTwo.push(buttonId)
         playerTwoPiecesCount++;
     }
     
@@ -184,20 +209,37 @@ function handleEvent(buttonId){
    
 }
 
-// let mill = [
-//     ["0-0","0-6","0-12"],
-//     ["0-0", "6-0","12-0"],
-//     ["12-0","12-6","12-12"],
-//     ["0-12","6-12","12-12"],
-//     ["2-2","2-6","2-10"],
-//     ["2-2","6-2","10-2"],
-//     ["2-10","6-10","10-10"],
-//     ["10-2","10-6","10-10"],
-//     ["4-4","4-6","4-8"],
-//     ["4-4","6-4","8-4"],
-//     ["4-8","6-8","8-8"],
-//     ["8-4",]
-// ]
+function calculateMillPlayer2(){
+    for(let i = 0; i < mill.length; i++){
+        let arr = []
+        for(let j = 0 ; j< positionPlayerTwo.length; j++){
+            if (mill[i][0] === positionPlayerTwo[j] || mill[i][1] === positionPlayerTwo[j] || mill[i][2] === positionPlayerTwo[j]){
+                arr.push(positionPlayerTwo[j])
+            }
+        }
+        if (arr.length === 3){
+            console.log(arr)
+            alert (`Player Two You have  mill`)
+            return;
+        } 
+    } 
+}
+
+function calculateMillPlayer1(){
+    for(let i = 0; i < mill.length; i++){
+        let arr = []
+        for(let j = 0 ; j< positionPlayerOne.length; j++){
+            if (mill[i][0] === positionPlayerOne[j] || mill[i][1] === positionPlayerOne[j] || mill[i][2] === positionPlayerOne[j]){
+                arr.push(positionPlayerOne[j])
+            }
+        }
+        if (arr.length === 3){
+            console.log(arr)
+            alert (`Player One You have  mill`)
+            return
+        } 
+    } 
+}
 
 
 
@@ -239,7 +281,6 @@ function buildForm(){
     labelPlayerOne.for = "player1"
     labelPlayerOne.textContent = "player1".toUpperCase()
     
-
     let inputPlayerTwo = document.createElement('input')
     inputPlayerTwo.type = "text"
     labelPlayerTwo.for = "player2"
@@ -254,6 +295,7 @@ function buildForm(){
         turn = 1;
         createPlayer(e.target[0].value, e.target[1].value)
     })
+    
 }
 
 
@@ -273,7 +315,7 @@ function buildPlayer(game){
 
     playerList.append(player1, player2, currentGameId, gameButton)
     body.append(playerList)
-    gameButton.addEventListener('click', (e) => deleteGame(game, gameButton) )
+    gameButton.addEventListener('click', (e) => deleteGame(game) )
 }
 
     let gameList = document.createElement('ul')
