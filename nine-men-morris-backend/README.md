@@ -22,7 +22,7 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
-Welcome to the nine men's morris game.
+Welcome to the nine men's morris game.For game rules please refer this website 'https://www.mastersofgames.com/rules/morris-rules.htm'
 
 we have used Ruby version 2.6.1p33
 

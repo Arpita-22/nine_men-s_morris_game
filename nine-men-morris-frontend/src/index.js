@@ -155,8 +155,9 @@ let mill = [
 ]
 
 let positionPlayerOne = []
-let  positionPlayerTwo = []
-
+let positionPlayerTwo = []
+let millPlayerOne = false
+let millPlayerTwo = false
 
 function handleEvent(buttonId){
     // snd.play();
@@ -167,10 +168,15 @@ function handleEvent(buttonId){
             if(!btn.style.backgroundColor) {
                 calculateMillPlayer1()
                 alert("You cannot add any more!");     
+            } else if (millPlayerOne == true && btn.style.backgroundColor != 'green'){
+               alert("Choose Player Two's button to remove and then choose a piece in Mill");     
+            } else if (millPlayerOne == true && btn.style.backgroundColor == 'green') {
+                btn.style.backgroundColor = ""
+                millPlayerOne = false
             } else if (btn.style.backgroundColor == 'green'){
                 alert("You cannot choose the other players piece!");     
             } else {
-                calculateMillPlayer1()
+                //calculateMillPlayer1()
                 playerOnePiecesCount--;
                 btn.style.backgroundColor = ""
                 alert("You have chosen the piece to remove");     
@@ -186,10 +192,15 @@ function handleEvent(buttonId){
             if(!btn.style.backgroundColor) {
                 calculateMillPlayer2()
                 alert("You cannot add any more!");     
-            } else if (btn.style.backgroundColor === 'yellow'){
+            } else if (millPlayerTwo == true && btn.style.backgroundColor != 'yellow'){
+                alert("Choose Player One's button to remove and then choose a piece in Mill");     
+             } else if (millPlayerTwo == true && btn.style.backgroundColor == 'yellow') {
+                 btn.style.backgroundColor = ""
+                 millPlayerTwo = false
+             } else if (btn.style.backgroundColor === 'yellow'){
                 alert("You cannot choose the other players piece!");     
             } else {
-                calculateMillPlayer2()
+                //calculateMillPlayer2()
                 playerTwoPiecesCount--;
                 btn.style.backgroundColor = ""
                 alert("You have chosen the piece to remove");     
@@ -219,7 +230,8 @@ function calculateMillPlayer2(){
         }
         if (arr.length === 3){
             console.log(arr)
-            alert (`Player Two You have  mill`)
+            alert (`Player Two You have  mill. Remove player One's Piece`)
+            millPlayerTwo = true
             return;
         } 
     } 
@@ -235,7 +247,8 @@ function calculateMillPlayer1(){
         }
         if (arr.length === 3){
             console.log(arr)
-            alert (`Player One You have  mill`)
+            alert (`Player One You have  mill. Remove player Two's Piece`)
+             millPlayerOne = true
             return
         } 
     } 
