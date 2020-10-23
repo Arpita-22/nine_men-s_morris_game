@@ -54,7 +54,15 @@ let playerTwoPiecesCount = 1;
 document.addEventListener("DOMContentLoaded", function(event) {
     // createTable(13, 13);
     buildForm();
+    fetchGames();
+    
 });
+
+function fetchGames(){
+    fetch('http://localhost:3000/games')
+    .then(res => res.json())
+    .then(games => games.slice(0,4).forEach(game =>  buildGames(game)))
+}
 
 function createPlayer(playerOne, playerTwo){
     fetch('http://localhost:3000/games', {
@@ -69,6 +77,7 @@ function createPlayer(playerOne, playerTwo){
     })
     .then(response => response.json())
     .then(game => {
+        document.querySelector("#game-list-id").innerHTML = ''
         playerForm.innerHTML = ' '
         updatePlayer(game)
         createTable(13, 13);
@@ -118,18 +127,17 @@ function updatePlayer(game){
     });
 }
 
-// function deletePlayer(){
-//     fetch(`http://localhost:3000/players/`,{
-//         method: 'DELETE'
-//     })
-//     .then(res => res.json())
-//     .then(() => {console.log()
-//     })
-// }
+function deleteGame(game, gameButton){
+    fetch(`http://localhost:3000/games/${game.id}`,{
+        method: 'DELETE'
+    })
+    .then(res => res.json())
+    .then(() => {
+        document.getElementById("game-id").remove()
+        buildForm()
+    })
+}
 
-// let mill = [
-//     []
-// ]
 
 function handleEvent(buttonId){
     // snd.play();
@@ -176,6 +184,22 @@ function handleEvent(buttonId){
    
 }
 
+// let mill = [
+//     ["0-0","0-6","0-12"],
+//     ["0-0", "6-0","12-0"],
+//     ["12-0","12-6","12-12"],
+//     ["0-12","6-12","12-12"],
+//     ["2-2","2-6","2-10"],
+//     ["2-2","6-2","10-2"],
+//     ["2-10","6-10","10-10"],
+//     ["10-2","10-6","10-10"],
+//     ["4-4","4-6","4-8"],
+//     ["4-4","6-4","8-4"],
+//     ["4-8","6-8","8-8"],
+//     ["8-4",]
+// ]
+
+
 
 // function adjacentValidPositions(position){ 
 //     let pos = position.split("-");
@@ -206,9 +230,6 @@ let submitPlayerInfo = document.createElement('input')
 body.append(playerForm)
 
 function buildForm(){
-    // let playerForm = document.createElement('form')
-    // let submitPlayerInfo = document.createElement('input')
-    // body.append(playerForm)
     let labelPlayerOne = document.createElement('label')
     let labelPlayerTwo = document.createElement('label')
     
@@ -236,21 +257,33 @@ function buildForm(){
 }
 
 
-
-// playerForm.addEventListener('submit', (e) => {
-//     e.preventDefault()
-//     turn = 1;
-//     createPlayer(e.target[0].value, e.target[1].value)
-// })
-
 function buildPlayer(game){
-    let ul = document.createElement('ul')
+    let playerList = document.createElement('ul')
     let player1 = document.createElement('li')
     let player2 = document.createElement('li')
+    let currentGameId = document.createElement('li')
+    let gameButton = document.createElement('button')
 
+    gameButton.textContent = "X"
+    gameButton.style.Color = "red"
+    gameButton.id = "game-id"
     player1.textContent = game.player_one.name
     player2.textContent = game.player_two.name
+    currentGameId = `Game_id: ${game.id}`
 
-    ul.append(player1, player2)
-    body.append(ul)
+    playerList.append(player1, player2, currentGameId, gameButton)
+    body.append(playerList)
+    gameButton.addEventListener('click', (e) => deleteGame(game, gameButton) )
+}
+
+    let gameList = document.createElement('ul')
+
+ function buildGames(game){
+    let gamePlayed = document.createElement('li')
+
+    gamePlayed.textContent = `game id: ${game.id} player_one: ${game.player_one.name} player_two: ${game.player_two.name}`
+    gameList.id = "game-list-id"
+    gameList.append(gamePlayed)
+    body.append(gameList)
+
 }

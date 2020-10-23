@@ -33,9 +33,15 @@ class GamesController < ApplicationController
         render json: game, include: [:player_one, :player_two]
     end
 
-    private
-    def game_params
-        params.require(:game).permit(:player_one_id,:player_two_id,:move_time_limit, :turn)
+    def delete
+        game = Game.find(params[:id])
+        game.destroy
+        render json: ("message:""Game Destroyed")
     end
+
+    # private
+    # def game_params
+    #     params.require(:game).permit(:player_one_id,:player_two_id,:move_time_limit, :turn)
+    # end
 
 end
